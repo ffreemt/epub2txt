@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "epub2txt"
+version = "0.1.0"
+description = "Convert epub to txt with additonal utils"
+authors = ["freemt"]
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/ffreemt/epub2txt"
+
+[tool.poetry.dependencies]
+python = "^3.6.1"
+logzero = "^1.6.3"
+tqdm = "^4.56.0"
+httpx = "^0.16.1"
+ebooklib = "^0.17.1"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
