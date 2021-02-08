@@ -28,9 +28,10 @@ epub2txt
 epub2txt -i
 
 # show more epub book info: title, toc, metadata, spine (list of stuff packed into the epub)
-epub2txt -i
+epub2txt -m
 
 # show epub2txt version
+epub2txt -V
 
 ```
 
@@ -50,3 +51,5 @@ res = epub2txt(filepath)
 
 ## TODO
 *   Extract a single chapter
+*   Batch conversion of several epub files
+
