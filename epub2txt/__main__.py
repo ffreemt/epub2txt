@@ -1,4 +1,5 @@
 """Convert tmx to epub."""
+# pylint: disable=invalid-name
 from pathlib import Path
 
 import logzero
@@ -8,7 +9,14 @@ from logzero import logger
 from absl import app, flags
 
 # from tmx2epub.xml_iter import xml_iter
-from .browse_filename import browse_filename
+# do not fire browse_filename if tkiner is not present
+try:
+    import tkinter
+    tkinter_available = True
+    from .browse_filename import browse_filename
+except ModuleNotFoundError:
+    tkinter_available = False
+
 from .gen_filename import gen_filename
 from .epub2txt import epub2txt
 
@@ -59,13 +67,15 @@ def proc_argv(_):  # pylint: disable=too-many-branches  # noqa: C901
     filename = FLAGS.filename
     # if not Path(filename).exists():
     if not Path(filename).is_file():
-        try:
-            filename = browse_filename(Path(filename))
-        except Exception as exc:
-            logger.error(exc)
-            filename = ""
-        logger.debug(" file selected: %s", filename)
-
+        filename = ""
+        if tkinter_available:
+            try:
+                filename = browse_filename(Path(filename))
+            except Exception as exc:
+                logger.error(exc)
+                filename = ""
+            logger.debug(" file selected: %s", filename)       
+        
     if not filename:
         logger.info("\n\t Operation canceled or no filename provided, unable to proceed, exiting...")
         raise SystemExit(1)
