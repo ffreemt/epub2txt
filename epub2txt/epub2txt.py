@@ -7,7 +7,10 @@ from pathlib import Path
 
 # for with_func_attrs
 # from typing import Iterable
-from collections import Iterable  # < py38
+try:
+    from collections import Iterable  # < py38
+except:
+    from collections.abc import Iterable
 
 # the rest
 from itertools import zip_longest
