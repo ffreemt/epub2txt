@@ -9,7 +9,7 @@ from pathlib import Path
 # from typing import Iterable
 try:
     from collections import Iterable  # < py38
-except:
+except ImportError:
     from collections.abc import Iterable
 
 # the rest
