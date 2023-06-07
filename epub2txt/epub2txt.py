@@ -5,13 +5,11 @@ from typing import Any, Callable, List, Union
 
 from pathlib import Path
 
-# for with_func_attrs
-# from typing import Iterable
-# try:
-# from collections import Iterable  # < py38
-# except ImportError:
-from collections.abc import Iterable
-
+try:
+    from collections.abc import Iterable  # python 3.10+
+except ImportError:
+    from collections import Iterable  # python < 3.10
+    
 # the rest
 from itertools import zip_longest
 import httpx
