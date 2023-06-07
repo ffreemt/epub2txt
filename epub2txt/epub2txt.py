@@ -1,32 +1,33 @@
 """Convert epub to text."""
-# pylint:
-
-from typing import Any, Callable, List, Union
+# pylint: disable=invalid-name, too-many-branches, too-many-statements, broad-except, deprecated-class
 
 from pathlib import Path
+from typing import Any, Callable, List, Union
 
 try:
     from collections.abc import Iterable  # python 3.10+
 except ImportError:
     from collections import Iterable  # python < 3.10
-    
-# the rest
-from itertools import zip_longest
-import httpx
-import io
-from lxml import etree
-from ebooklib import epub
 
+# the rest
+import io
+from itertools import zip_longest
+
+import httpx
 import logzero
+from ebooklib import epub
 from logzero import logger
+from lxml import etree
 
 
 def with_func_attrs(**attrs: Any) -> Callable:
-    '''Deco with_func_attrs.'''
+    """Deco with_func_attrs."""
+
     def with_attrs(fct: Callable) -> Callable:
         for key, val in attrs.items():
             setattr(fct, key, val)
         return fct
+
     return with_attrs
 
 
@@ -63,7 +64,7 @@ def epub2txt(
         logzero.loglevel(20)
 
     # process possible url
-    if filepath.__str__().startswith("http"):
+    if str(filepath).startswith("http"):
         try:
             resp = httpx.get(filepath, timeout=30)
             resp.raise_for_status()
