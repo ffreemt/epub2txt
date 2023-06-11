@@ -12,6 +12,9 @@ Convert epub to txt with additonal utils
 pip install epub2txt
 # pip install epub2txt -U  # to upgrade
 ```
+## Fixes
+* More resilent to mismatched tags
+* Added `epub2txt.content_titles`, useful for creating metada when needed
 
 ## Usage
 
@@ -47,9 +50,12 @@ res = epub2txt(url)
 filepath = r"tests\test.epub"
 res = epub2txt(filepath)
 
+# output as a list of chapters
+ch_list = epub2txt(filepath, outputlist=True)
+# chapter titles will be available as epub2txt.content_titles if available
+
 ```
 
 ## TODO
-*   Extract a single chapter
 *   Batch conversion of several epub files
 
