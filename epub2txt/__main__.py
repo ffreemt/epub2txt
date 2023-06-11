@@ -1,24 +1,27 @@
 """Convert tmx to epub."""
-# pylint: disable=invalid-name
+# pylint: disable=invalid-name, line-too-long, trailing-whitespace, broad-exception-caught, too-many-statements, unused-import
 from pathlib import Path
 
 import logzero
-from logzero import logger
 
 # from pyquery import PyQuery as pq
 from absl import app, flags
+from logzero import logger
 
 # from tmx2epub.xml_iter import xml_iter
 # do not fire browse_filename if tkiner is not present
 try:
-    import tkinter
+    import tkinter  # noqa
+
     tkinter_available = True
     from .browse_filename import browse_filename
 except ModuleNotFoundError:
     tkinter_available = False
 
-from .gen_filename import gen_filename
+from epub2txt import __version__
+
 from .epub2txt import epub2txt
+from .gen_filename import gen_filename
 
 FLAGS = flags.FLAGS
 flags.DEFINE_string(
@@ -49,8 +52,7 @@ def proc_argv(_):  # pylint: disable=too-many-branches  # noqa: C901
     # version = "0.1.0"
 
     if FLAGS.version:
-        from epub2txt import __version__
-        print("tmx2epub %s 20210208, brought to you by mu@qq41947782" % __version__)
+        print(f"tmx2epub {__version__} 20210208, brought to you by mu@qq41947782")
         raise SystemExit(0)
 
     if FLAGS.debug:
@@ -74,10 +76,12 @@ def proc_argv(_):  # pylint: disable=too-many-branches  # noqa: C901
             except Exception as exc:
                 logger.error(exc)
                 filename = ""
-            logger.debug(" file selected: %s", filename)       
-        
+            logger.debug(" file selected: %s", filename)
+
     if not filename:
-        logger.info("\n\t Operation canceled or no filename provided, unable to proceed, exiting...")
+        logger.info(
+            "\n\t Operation canceled or no filename provided, unable to proceed, exiting..."
+        )
         raise SystemExit(1)
 
     # filename = getattr(FLAGS, "filename")
@@ -122,19 +126,23 @@ def proc_argv(_):  # pylint: disable=too-many-branches  # noqa: C901
         )
     except Exception as exc:
         logger.error("epub2txt exc: %s", exc)
-        raise SystemExit(1)
+        raise SystemExit(1) from exc
 
     if FLAGS.i:
-        print(f"""
+        print(
+            f"""
             {epub2txt.title}
-            {epub2txt.toc}""")
+            {epub2txt.toc}"""
+        )
         raise SystemExit(0)
     if FLAGS.m:
-        print(f"""
+        print(
+            f"""
             {epub2txt.title}
             {epub2txt.toc}
             {epub2txt.metadata}
-            {epub2txt.spine}""")
+            {epub2txt.spine}"""
+        )
         raise SystemExit(0)
 
     logger.debug(" epub generated **%s**", text[:200])
@@ -143,14 +151,14 @@ def proc_argv(_):  # pylint: disable=too-many-branches  # noqa: C901
         Path(FLAGS.dest).write_text(text, encoding="utf8")
     except Exception as exc:
         logger.error("Path(FLAGS.dest).write_text exc: %s", exc)
-        raise SystemExit(1)
+        raise SystemExit(1) from exc
 
     logger.info(" epub file: %s", FLAGS.filename)
     logger.info(" text file: %s", FLAGS.dest)
 
 
 def main():
-    """ main. """
+    """main."""
     app.run(proc_argv)
 
 

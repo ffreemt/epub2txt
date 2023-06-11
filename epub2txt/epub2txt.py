@@ -1,5 +1,5 @@
 """Convert epub to text."""
-# pylint: disable=invalid-name, too-many-branches, too-many-statements, broad-except, deprecated-class
+# pylint: disable=invalid-name, too-many-branches, too-many-statements, too-many-locals, broad-except, deprecated-class, line-too-long, c-extension-no-member
 
 from pathlib import Path
 from typing import Any, Callable, List, Union
@@ -13,11 +13,14 @@ except ImportError:
 import io
 from itertools import zip_longest
 
+import ebooklib
 import httpx
 import logzero
 from ebooklib import epub
 from logzero import logger
 from lxml import etree
+
+parser = etree.HTMLParser()
 
 
 def with_func_attrs(**attrs: Any) -> Callable:
@@ -110,7 +113,20 @@ def epub2txt(
 
     epub2txt.metadata = [*book.metadata.values()]
 
-    contents = [book.get_item_with_id(item[0]).content for item in book.spine]
+    # contents = [book.get_item_with_id(item[0]).content for item in book.spine]
+    contents = [elm.content for elm in book.get_items_of_type(ebooklib.ITEM_DOCUMENT)]
+
+    names = [elm.get_name() for elm in book.get_items_of_type(ebooklib.ITEM_DOCUMENT)]
+
+    epub2txt.names = names
+
+    # content/chapter titles
+    # remove bookmark #: most toc_hrefs correspond to names
+    _ = [Path(elm).with_suffix('.xhtml').as_posix() for elm in epub2txt.toc_hrefs]
+    name2title = dict(zip(_, epub2txt.toc_titles))
+
+    epub2txt.content_titles = [name2title.get(name, "NA") for name in names]
+
     # texts = [pq(content).text() for content in contents]
 
     # Using XPath to find text
@@ -120,7 +136,8 @@ def epub2txt(
 
     texts = []
     for content in contents:
-        root = etree.XML(content)
+        # root = etree.XML(content)
+        root = etree.XML(content, parser=parser)
         tree = etree.ElementTree(root)
         text = tree.xpath("string()")
         texts.append(text)

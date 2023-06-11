@@ -1,12 +1,16 @@
 """Browse to a file.
 
 https://pythonspot.com/tk-file-dialogs/
-filedialog.askopenfilename(initialdir = "/",title = "Select file",filetypes=(("jpeg files","*.jpg"),("all files","*.*")))
+filedialog.askopenfilename(
+    initialdir = "/",
+    title = "Select file",
+    filetypes=(("jpeg files","*.jpg"),
+    ("all files","*.*")))
 """
+import tkinter as Tkinter
+
 # import sys
 from pathlib import Path
-
-import tkinter as Tkinter
 from tkinter import filedialog as tkFileDialog
 
 

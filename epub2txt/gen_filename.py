@@ -3,8 +3,8 @@
 Give a file name, gen a filename whose file does not exist by adding extra number
 """
 from pathlib import Path
-from string import ascii_lowercase
 from random import sample
+from string import ascii_lowercase
 
 
 def gen_filename(filename, sep="_", rand=False):
