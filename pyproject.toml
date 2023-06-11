@@ -24,6 +24,7 @@ epub2txt = "epub2txt.__main__:main"
 
 [tool.poetry.group.dev.dependencies]
 pylint = "^2.17.4"
+ipython = "8.12.2"
 
 [build-system]
 requires = ["poetry>=0.12"]
