@@ -10,7 +10,8 @@ except ImportError:
     from collections import Iterable  # python < 3.10
 
 # the rest
-import io
+# import io
+import tempfile
 from itertools import zip_longest
 
 import ebooklib
@@ -69,17 +70,24 @@ def epub2txt(
     # process possible url
     if str(filepath).startswith("http"):
         try:
-            resp = httpx.get(filepath, timeout=30)
+            resp = httpx.get(filepath, timeout=30, follow_redirects=True)
             resp.raise_for_status()
         except Exception as exc:
             logger.error("httpx.get(%s) exc: %s", filepath, exc)
             raise
-        cont = io.BytesIO(resp.content)
+        # cont = io.BytesIO(resp.content)
+        with tempfile.NamedTemporaryFile(mode='w+b', delete=False) as tfile:
+            try:
+                tfile.write(resp.content)
+            except Exception as exc:
+                logger.error(exc)
+                raise
+            file_name = tfile.name
 
         try:
-            book = epub.read_epub(cont)
+            book = epub.read_epub(file_name)
         except Exception as exc:
-            logger.error("epub.read_epub(cont) exc: %s", exc)
+            logger.error("epub.read_epub(%s) exc: %s", file_name, exc)
             raise
     else:
         filepath = Path(filepath)
