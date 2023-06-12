@@ -45,6 +45,24 @@ def flatten_iter(items):
             yield x
 
 
+def fillin_title(ilist):
+    """Convert NA to chapter title*.
+
+    ['NA', 'NA', 'a', 'NA', 'NA', 'b', 'NA', 'c', 'NA'] =>
+    ['NA', 'NA', 'a', 'a*', 'a*', 'b', 'b*', 'c', 'NA']
+    """
+    lst = ilist[:]
+    tf = [*map(lambda x: x != "NA", lst)]
+
+    prev = None
+    for i in range(tf.index(True), len(tf) - tf[::-1].index(True)):
+        if lst[i] == "NA":
+            lst[i] = prev
+        else:
+            prev = lst[i] + "*"
+    return lst
+
+
 # fmt: off
 @with_func_attrs(title="", toc="", toc_titles="", toc_hrefs="", toc_uids="", spine="", metadata="")
 def epub2txt(
@@ -134,7 +152,11 @@ def epub2txt(
     _ = [elm.rsplit("#", 1)[0] for elm in epub2txt.toc_hrefs]
     name2title = dict(zip(_, epub2txt.toc_titles))
 
-    epub2txt.content_titles = [name2title.get(name, "NA") for name in names]
+    _ = [name2title.get(name, "NA") for name in names]
+    try:
+        epub2txt.content_titles = fillin_title(_)
+    except Exception:
+        epub2txt.content_titles = _
 
     # texts = [pq(content).text() for content in contents]
 
