@@ -130,7 +130,8 @@ def epub2txt(
 
     # content/chapter titles
     # remove bookmark #: most toc_hrefs correspond to names
-    _ = [Path(elm).with_suffix('.xhtml').as_posix() for elm in epub2txt.toc_hrefs]
+    # _ = [Path(elm).with_suffix('.xhtml').as_posix() for elm in epub2txt.toc_hrefs]
+    _ = [elm.rsplit("#", 1)[0] for elm in epub2txt.toc_hrefs]
     name2title = dict(zip(_, epub2txt.toc_titles))
 
     epub2txt.content_titles = [name2title.get(name, "NA") for name in names]

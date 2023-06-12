@@ -24,7 +24,7 @@ def browse_filename(
         )
 ):
     # fmt: on
-    '''Browse for a filename.'''
+    """Browse for a filename."""
     root = Tkinter.Tk()
     root.withdraw()
     filename = tkFileDialog.askopenfilename(
